@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
-import { DtoLaporan } from '../dto/reports.dto.js';
+import { DtoLaporan, UpdateDto } from '../dto/reports.dto.js';
 import { Categories } from '../categories/categories.entity.js';
 import { Locations } from '../entities/locations.entity.js';
 import { Reports } from '../entities/reports.entity.js';
@@ -74,7 +74,7 @@ export class ReportsService {
       locations: lokasi,
     });
 
-    const simpanLaporan = this.repoLaporan.save(laporanBaru)
+    this.repoLaporan.save(laporanBaru);
 
     return {
       status: 201,
@@ -96,9 +96,103 @@ export class ReportsService {
     }
 
     return {
-        status: 200,
-        message: "sukses",
-        data: cariSemuaLaporan
+      status: 200,
+      message: 'sukses',
+      data: cariSemuaLaporan,
     };
   }
+
+  async findOne(id: string) {
+    const cariID = await this.repoLaporan.findOne({
+      where: {
+        id: id,
+      },
+      relations: {
+        categories: true,
+        locations: true,
+      },
+    });
+
+    if (!cariID) {
+      throw new NotFoundException(
+        'Sepertinya Belum Dibuat Laporan Oleh Salah Satu Pelapor',
+      );
+    }
+
+    return {
+      status: 200,
+      message: 'Sukses',
+      data: cariID,
+    };
+  }
+
+  async update(id: string, updateLaporan: UpdateDto) {
+    const cariID = await this.repoLaporan.findOne({
+      where: {
+        id: id,
+      },
+    });
+
+    const {locationId, categoryId, ...updateDataLaporan} = updateLaporan;
+
+    const cariLokasi = await this.repoLokasi.findOne({
+      where: {
+        id: locationId
+      }
+    });
+
+    const cariKategori = await this.repoKategori.findOne({
+      where: {
+        id: categoryId
+      }
+    })
+
+    if (!cariKategori) {
+      throw new NotFoundException("Tidak Ditemukan Kategori")
+    }
+
+    if(!cariLokasi) {
+      throw new NotFoundException("Tidak Ada Lokasi Ditemukan")
+    }
+
+    if (!cariID) {
+      throw new NotFoundException("Sepertinya Laporan Tidak Ditemukan")
+    }
+
+    Object.assign(cariID, updateDataLaporan)
+
+    const UpdateData = await this.repoLaporan.save(cariID);
+
+    return {
+      status: 200,
+      message: "Sukses",
+      data: UpdateData
+    }
+  }
+
+async delete (id: string) {
+  const tampilkanID = await this.repoLaporan.findOne({
+    where: {
+      id: id
+    },
+    relations: {
+      categories: true,
+      locations: true
+    }
+  })
+
+  if (!tampilkanID) {
+    throw new NotFoundException("Sepertinya Laporan Belum Di Buat")
+  }
+
+  await this.repoLaporan.delete({
+    id: id
+  })
+
+  return {
+    status: 200,
+    message: "success",
+    data: tampilkanID
+  }
+}
 }

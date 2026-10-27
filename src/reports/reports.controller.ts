@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { ReportsService } from './reports.service.js';
-import { DtoLaporan } from '../dto/reports.dto.js';
+import { DtoLaporan, UpdateDto } from '../dto/reports.dto.js';
 
 @Controller('reports')
 export class ReportsController {
@@ -13,6 +13,21 @@ async create(@Body() laporandto: DtoLaporan) {
 @Get("/findAll")
 async findAll() {
   return this.laporanService.findAll()
+}
+
+@Get("/findOne/:id")
+async findOne(@Param("id") id: string) {
+  return this.laporanService.findOne(id)
+}
+
+@Patch("/update/:id")
+async update(@Param("id") id: string, @Body() updateDto: UpdateDto) {
+  return this.laporanService.update(id, updateDto)
+}
+
+@Delete("/delete/:id")
+async delete(@Param("id") id: string) {
+  return this.laporanService.delete(id)
 }
 
 }

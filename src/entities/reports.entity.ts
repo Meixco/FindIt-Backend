@@ -1,6 +1,7 @@
-import { Column, PrimaryColumn, Entity, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from "typeorm";
+import { Column, PrimaryColumn, Entity, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from "typeorm";
 import type { Categories } from "../categories/categories.entity.js";
 import type { Locations } from "./locations.entity.js";
+import { PrivateContact } from "./privateContact.entity.js";
 
 @Entity()
 export class Reports {
@@ -41,4 +42,7 @@ export class Reports {
     @ManyToOne("Locations", (locations: Locations) => locations.reports, {onDelete: "CASCADE"})
     @JoinColumn({name: 'location_id'})
     locations: Locations;
+
+    @OneToMany(() => PrivateContact, (priavatecontact) => priavatecontact.reports)
+    privatecontact: PrivateContact
 }

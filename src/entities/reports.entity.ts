@@ -1,6 +1,6 @@
 import { Column, PrimaryColumn, Entity, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from "typeorm";
-import { Categories } from "../categories/categories.entity.js";
-import { Locations } from "./locations.entity.js";
+import type { Categories } from "../categories/categories.entity.js";
+import type { Locations } from "./locations.entity.js";
 
 @Entity()
 export class Reports {
@@ -34,11 +34,11 @@ export class Reports {
     @UpdateDateColumn({name: "updated_at"})
     updatedAt: Date;
 
-    @ManyToOne(() => Categories, (categories) => categories.reports, {onDelete: "SET NULL"})
+    @ManyToOne("Categories", (categories: Categories) => categories.reports, {onDelete: "CASCADE"})
     @JoinColumn({name: 'category_id'})
     categories: Categories;
 
-    @ManyToOne(() => Locations, (locations) => locations.reports, {onDelete: "SET NULL"})
+    @ManyToOne("Locations", (locations: Locations) => locations.reports, {onDelete: "CASCADE"})
     @JoinColumn({name: 'location_id'})
     locations: Locations;
 }

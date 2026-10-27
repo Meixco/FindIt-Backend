@@ -6,11 +6,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ReportsController } from './reports/reports.controller.js';
 import { ReportsService } from './reports/reports.service.js';
 import { CategoriesModule } from './categories/categories.module.js';
-import { Categories } from './categories/categories.entity.js';
 import { ReportsModule } from './reports/reports.module.js';
 import { LocationsModule } from './locations/locations.module.js';
-import { Locations } from './entities/locations.entity.js';
 import { Reports } from './entities/reports.entity.js';
+import { Locations } from './entities/locations.entity.js';
+import { Categories } from './categories/categories.entity.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -23,7 +23,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
       username: 'root',
       password:'',
       database: 'findit',
-      entities: [Categories, Locations, Reports],
+      entities: [Locations, Categories, Reports],
       synchronize: true
     }),
     ObserveModule.forRoot({
@@ -35,7 +35,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     CategoriesModule,
     LocationsModule,
   ],
-  controllers: [AppController, ReportsController],
-  providers: [AppService, ReportsService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

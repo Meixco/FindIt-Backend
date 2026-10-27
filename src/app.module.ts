@@ -9,6 +9,7 @@ import { CategoriesModule } from './categories/categories.module.js';
 import { Categories } from './categories/categories.entity.js';
 import { ReportsModule } from './reports/reports.module.js';
 import { LocationsModule } from './locations/locations.module.js';
+import { Locations } from './entities/locations.entity.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -21,7 +22,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
       username: 'root',
       password:'',
       database: 'findit',
-      entities: [],
+      entities: [Categories, Locations],
       synchronize: true
     }),
     ObserveModule.forRoot({

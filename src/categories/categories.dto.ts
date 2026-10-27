@@ -11,6 +11,6 @@ name: string;
 
 export class TambahKategori extends PickType(DtoCategories, ["id", "name"]){}
 
-export class UpdateKategori extends PickType(DtoCategories, ["id", "name"]){}
+export class UpdateKategori extends OmitType(DtoCategories, ["id"]){}
 
 export class DeleteKategori extends OmitType(DtoCategories, ["name"]){}

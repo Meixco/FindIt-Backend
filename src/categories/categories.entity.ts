@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, type Relation } from "typeorm";
 import { Reports } from "../entities/reports.entity.js";
 
 @Entity()
@@ -10,5 +10,5 @@ export class Categories {
     name: string;
 
     @OneToMany(() => Reports, (reports) => reports.categories)
-    reports: Reports[];
+    reports: Relation<Reports[]>;
 }

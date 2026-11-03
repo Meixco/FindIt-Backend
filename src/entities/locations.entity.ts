@@ -1,4 +1,4 @@
-import { PrimaryGeneratedColumn, Column, Entity, OneToMany } from "typeorm";
+import { PrimaryGeneratedColumn, Column, Entity, OneToMany, type Relation } from "typeorm";
 import { Reports } from "./reports.entity.js";
 
 @Entity()
@@ -16,5 +16,5 @@ export class Locations {
     area_name: string;
     
     @OneToMany(() => Reports, (reports) => reports.locations)
-    reports: Reports[];
+    reports: Relation<Reports[]>;
 }

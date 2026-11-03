@@ -1,5 +1,5 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Reports } from "./reports.entity.js";
+import type { Reports } from "./reports.entity.js";
 
 @Entity()
 export class PrivateContact {

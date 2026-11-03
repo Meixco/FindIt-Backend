@@ -11,6 +11,7 @@ import { LocationsModule } from './locations/locations.module.js';
 import { Reports } from './entities/reports.entity.js';
 import { Locations } from './entities/locations.entity.js';
 import { Categories } from './categories/categories.entity.js';
+import { PrivateContactsModule } from './private-contacts/private-contacts.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -23,7 +24,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
       username: 'root',
       password:'',
       database: 'findit',
-      entities: [Locations, Categories, Reports],
+      autoLoadEntities: true,
       synchronize: true
     }),
     ObserveModule.forRoot({
@@ -34,6 +35,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     ReportsModule,
     CategoriesModule,
     LocationsModule,
+    PrivateContactsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

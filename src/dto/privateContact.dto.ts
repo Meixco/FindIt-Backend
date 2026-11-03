@@ -5,9 +5,9 @@ export class DTOContact {
     @IsInt()
     id: number;
 
-    @IsInt()
+    @IsString()
     @IsNotEmpty()
-    reportId: number;
+    reportId: string;
 
     @IsString()
     @IsNotEmpty()

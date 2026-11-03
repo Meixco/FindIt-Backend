@@ -1,6 +1,6 @@
-import { Column, PrimaryColumn, Entity, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from "typeorm";
-import type { Categories } from "../categories/categories.entity.js";
-import type { Locations } from "./locations.entity.js";
+import { Column, PrimaryColumn, Entity, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany, type Relation } from "typeorm";
+import { Categories } from "../categories/categories.entity.js";
+import { Locations } from "./locations.entity.js";
 import { PrivateContact } from "./privateContact.entity.js";
 
 @Entity()
@@ -35,14 +35,14 @@ export class Reports {
     @UpdateDateColumn({name: "updated_at"})
     updatedAt: Date;
 
-    @ManyToOne("Categories", (categories: Categories) => categories.reports, {onDelete: "CASCADE"})
+    @ManyToOne(() => Categories, (categories) => categories.reports, {onDelete: "CASCADE"})
     @JoinColumn({name: 'category_id'})
-    categories: Categories;
+    categories: Relation<Categories>;
 
-    @ManyToOne("Locations", (locations: Locations) => locations.reports, {onDelete: "CASCADE"})
+    @ManyToOne(() => Locations, (locations) => locations.reports, {onDelete: "CASCADE"})
     @JoinColumn({name: 'location_id'})
-    locations: Locations;
+    locations: Relation<Locations>;
 
     @OneToMany(() => PrivateContact, (priavatecontact) => priavatecontact.reports)
-    privatecontact: PrivateContact
+    privatecontact: Relation<PrivateContact>[];
 }

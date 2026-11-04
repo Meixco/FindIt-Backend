@@ -42,6 +42,27 @@ export class PrivateContactsService {
     }
   }
 
+  async findByOne (id: number) {
+    const idKontak = await this.repoKontak.findOne({
+        where: {
+            id: id
+        },
+        relations: {
+            reports: true
+        }
+    })
+
+    if (!idKontak) {
+        throw new NotFoundException("Maaf, Kontak Anda Tidak Ada")
+    }
+
+    return {
+        status: 200,
+        message: "Sukses",
+        data: idKontak
+    }
+  }
+
   async update (id: number, dtoUpdate: updateContact) {
     const idPerbarui = await this.repoKontak.findOne({
         where: {
@@ -73,6 +94,29 @@ export class PrivateContactsService {
         status: 200,
         message: "Sukses",
         data: perbarui
+    }
+  }
+
+  async delete (id: number)  {
+    const idKontak = await this.repoKontak.findOne({
+        where: {
+            id: id
+        },
+        relations: {
+            reports: true
+        }
+    })
+
+    if (!idKontak) {
+        throw new NotFoundException("Maaf, Tidak Ditemukan Kontak Anda")
+    }
+
+    await this.repoKontak.delete(idKontak)
+
+    return {
+        status: 200,
+        message: "Success",
+        data: idKontak
     }
   }
 }

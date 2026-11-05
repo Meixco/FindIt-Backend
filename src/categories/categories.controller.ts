@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { CategoriesService } from './categories.service.js';
-import { DeleteKategori, TambahKategori, UpdateKategori } from './categories.dto.js';
+import { TambahKategori, UpdateKategori } from '../dto/categories.dto.js';
 
 @Controller('categories')
 export class CategoriesController {

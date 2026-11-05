@@ -1,8 +1,14 @@
 import { Column, PrimaryColumn, Entity, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany, type Relation } from "typeorm";
-import { Categories } from "../categories/categories.entity.js";
+import { Categories } from "./categories.entity.js";
 import { Locations } from "./locations.entity.js";
 import { PrivateContact } from "./privateContact.entity.js";
+import { Claims } from "./claims.entity.js";
 
+export enum LostAndFoundStatus {
+  PENDING = 'pending',
+  LOST = 'lost',
+  FOUND = 'found',
+}
 @Entity()
 export class Reports {
     @PrimaryColumn({type: "varchar", length: 20})
@@ -26,8 +32,8 @@ export class Reports {
     @Column({nullable: true})
     photo_url_optional: string;
 
-    @Column({default: "PENDING"})
-    status: string;
+    @Column({type:"enum", enum:LostAndFoundStatus, default: LostAndFoundStatus.PENDING})
+    status: LostAndFoundStatus;
 
     @CreateDateColumn({name: "created_at"})
     createdAt: Date;
@@ -45,4 +51,7 @@ export class Reports {
 
     @OneToMany(() => PrivateContact, (priavatecontact) => priavatecontact.reports)
     privatecontact: Relation<PrivateContact>[];
+
+    @OneToMany(() => Claims, (claims) => claims.report)
+    claims: Relation<Claims[]>
 }

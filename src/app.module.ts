@@ -3,15 +3,11 @@ import { createObserveModule } from '@nestjs/observe';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ReportsController } from './reports/reports.controller.js';
-import { ReportsService } from './reports/reports.service.js';
 import { CategoriesModule } from './categories/categories.module.js';
 import { ReportsModule } from './reports/reports.module.js';
 import { LocationsModule } from './locations/locations.module.js';
-import { Reports } from './entities/reports.entity.js';
-import { Locations } from './entities/locations.entity.js';
-import { Categories } from './categories/categories.entity.js';
 import { PrivateContactsModule } from './private-contacts/private-contacts.module.js';
+import { ClaimsModule } from './claims/claims.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -36,6 +32,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     CategoriesModule,
     LocationsModule,
     PrivateContactsModule,
+    ClaimsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

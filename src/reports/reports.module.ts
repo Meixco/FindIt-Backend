@@ -13,6 +13,7 @@ import { CategoriesModule } from '../categories/categories.module.js';
     CategoriesModule
   ],
   controllers: [ReportsController],
-  providers: [ReportsService]
+  providers: [ReportsService],
+  exports: [TypeOrmModule, ReportsService]
 })
 export class ReportsModule {}

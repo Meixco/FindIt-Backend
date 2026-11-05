@@ -1,8 +1,9 @@
 import { OmitType, PartialType } from "@nestjs/mapped-types";
-import { IsInt, IsNotEmpty, IsString } from "class-validator";
+import { IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class DTOContact {
     @IsInt()
+    @IsOptional()
     id: number;
 
     @IsString()

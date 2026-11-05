@@ -26,16 +26,16 @@ export class PrivateContactsController {
 }
 
 // Khusus Admin
-@Controller('admin/private-contacts')
+@Controller('/admin/private-contacts')
 export class AdminPrivateContactsController {
   constructor(
     private readonly servisKontakuntukAdmin: PrivateContactsService,
   ) {}
-  @Get('find/:id')
+  @Get('/find/:id')
   async findOnebyAdmin(@Param('id') id: number) {
     return this.servisKontakuntukAdmin.findByOne(id);
   }
-  @Delete('delete/:id')
+  @Delete('/delete/:id')
   async deletebyAdmin(@Param('id') id: number) {
     return this.servisKontakuntukAdmin.delete(id);
   }

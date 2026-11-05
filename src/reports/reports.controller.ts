@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { ReportsService } from './reports.service.js';
-import { DtoLaporan, UpdateDto } from '../dto/reports.dto.js';
+import { DtoLaporan, ListReportsDto, UpdateDto } from '../dto/reports.dto.js';
 
 @Controller('reports')
 export class ReportsController {
@@ -11,8 +11,8 @@ async create(@Body() laporandto: DtoLaporan) {
 }
 
 @Get("/findAll")
-async findAll() {
-  return this.laporanService.findAll()
+async findAll(@Query() query: ListReportsDto) {
+  return this.laporanService.findAll(query)
 }
 
 @Get("/findOne/:id")

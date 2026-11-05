@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
-import { DtoLaporan, UpdateDto } from '../dto/reports.dto.js';
-import { Categories } from '../categories/categories.entity.js';
+import { FindOptionsOrder, FindOptionsWhere, Like, Repository } from 'typeorm';
+import { DtoLaporan, ListReportsDto, UpdateDto } from '../dto/reports.dto.js';
+import { Categories } from '../entities/categories.entity.js';
 import { Locations } from '../entities/locations.entity.js';
 import { Reports } from '../entities/reports.entity.js';
+import { dateRange, escapeLike, getSkip, toPaginated } from '../utills/pagination.utills.js';
 
 @Injectable()
 export class ReportsService {
@@ -83,23 +83,36 @@ export class ReportsService {
     };
   }
 
-  async findAll() {
-    const cariSemuaLaporan = await this.repoLaporan.find({
-      relations: {
-        categories: true,
-        locations: true,
-      },
+  async findAll(query: ListReportsDto) {
+    const {page, limit, order, sort_by, search, report_type, category_id, location_id, status, date_from, date_to} = query;
+
+    const base: FindOptionsWhere<Reports> = {};
+    if (report_type) base.report_type = report_type;
+    if (status) base.status = status as any;
+    if (category_id) base.categories = { id: category_id };
+    if (location_id) base.locations = { id: location_id };
+
+    const range = dateRange(date_from, date_to);
+    if (range) base.event_date = range as any;
+
+    const where: FindOptionsWhere<Reports> | FindOptionsWhere<Reports>[] =
+      search
+      ? [
+        {...base, item_name: Like(`%${escapeLike(search)}%`)},
+        {...base, description_public: Like(`%${escapeLike(search)}%`)}
+      ] : base
+
+      const orderBy = { [sort_by]: order, id: 'DESC' } as FindOptionsOrder<Reports>;
+
+    const [data, total] = await this.repoLaporan.findAndCount({
+      where,
+      relations: {categories: true, locations: true},
+      order: orderBy,
+      skip: getSkip(page, limit),
+      take: limit
     });
 
-    if (!cariSemuaLaporan) {
-      throw new NotFoundException('Sepertinya Belum Ada Laporan Yang Dibuat');
-    }
-
-    return {
-      status: 200,
-      message: 'sukses',
-      data: cariSemuaLaporan,
-    };
+    return toPaginated(data, total, page, limit);
   }
 
   async findOne(id: string) {

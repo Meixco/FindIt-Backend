@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { PrivateContactsController } from './private-contacts.controller.js';
+import { AdminPrivateContactsController, PrivateContactsController } from './private-contacts.controller.js';
 import { PrivateContactsService } from './private-contacts.service.js';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PrivateContact } from '../entities/privateContact.entity.js';
@@ -10,7 +10,7 @@ import { ReportsModule } from '../reports/reports.module.js';
     TypeOrmModule.forFeature([PrivateContact]),
     ReportsModule
 ],
-  controllers: [PrivateContactsController],
+  controllers: [PrivateContactsController, AdminPrivateContactsController],
   providers: [PrivateContactsService]
 })
 export class PrivateContactsModule {}

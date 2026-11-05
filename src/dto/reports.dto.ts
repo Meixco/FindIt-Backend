@@ -20,8 +20,8 @@ export enum ReportType {
 }
 
 export const REPORT_SORT_FIELDS = [
-  'created_at',
-  'updated_at',
+  'createdAt',
+  'updatedAt',
   'event_date',
   'item_name',
 ] as const;
@@ -70,7 +70,7 @@ export class UpdateDto extends PartialType(DtoLaporan) {}
 export class ListReportsDto extends PaginationDto {
   @IsOptional()
   @IsIn(REPORT_SORT_FIELDS)
-  sort_by: ReportSortField = 'created_at';
+  sort_by: ReportSortField = 'createdAt';
 
   @IsOptional()
   @IsEnum(ReportType)

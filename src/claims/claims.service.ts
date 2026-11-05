@@ -108,9 +108,9 @@ export class ClaimsService {
       throw new NotFoundException("Maaf, Tidak Ditemukan Klaim Pengguna")
     }
 
-    const perbarui = await this.repoKlaim.update(id,{
-      status: updateDto.status,
-    })
+    Object.assign(cariID, updateDto)
+
+    await this.repoKlaim.save(cariID)
 
     return {
       status: 200,

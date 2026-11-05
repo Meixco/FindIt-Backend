@@ -18,8 +18,8 @@ export enum ClaimStatusFilter {
 }
 
 export const CLAIM_SORT_FIELDS = [
-  'created_at',
-  'reviewed_at',
+  'createdAt',
+  'reviewedAt',
   'claimant_name',
 ] as const;
 
@@ -57,7 +57,7 @@ export class UpdateClaimStatusDto {
 export class ListClaimsDto extends PaginationDto {
   @IsOptional()
   @IsIn(CLAIM_SORT_FIELDS)
-  sort_by: ClaimSortField = 'created_at';
+  sort_by: ClaimSortField = 'createdAt';
 
   @IsOptional()
   @IsEnum(ClaimStatusFilter)

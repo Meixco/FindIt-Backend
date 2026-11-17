@@ -5,12 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Reports } from '../entities/reports.entity.js';
 import { LocationsModule } from '../locations/locations.module.js';
 import { CategoriesModule } from '../categories/categories.module.js';
+import { UploadsModule } from '../uploads/uploads.module.js';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Reports]),
     LocationsModule,
-    CategoriesModule
+    CategoriesModule,
+    UploadsModule
   ],
   controllers: [ReportsController, AdminReportsController],
   providers: [ReportsService],

@@ -13,6 +13,7 @@ import { UPLOADED_IMAGE_PATH_REGEX, detectImageType } from '../utills/image.util
 export class UploadsService implements OnModuleInit {
   /** Folder fisik: <UPLOAD_DIR>/reports */
   private readonly dir: string;
+  private readonly baseUrl: string;
 
   constructor(config: ConfigService) {
     this.dir = resolve(
@@ -20,6 +21,8 @@ export class UploadsService implements OnModuleInit {
       config.get<string>('UPLOAD_DIR') ?? 'uploads',
       'reports',
     );
+    const rawUrl = config.get<string>('BASE_URL') ?? config.get<string>('APP_URL');
+    this.baseUrl = rawUrl?.replace(/\/$/, '') ?? 'http://localhost:3000';
   }
 
   async onModuleInit() {
@@ -39,8 +42,9 @@ export class UploadsService implements OnModuleInit {
     const filename = `${randomUUID()}.${type.ext}`;
     await writeFile(join(this.dir, filename), file.buffer, { flag: 'wx' });
 
+    const relativePath = `/uploads/reports/${filename}`
     return {
-      path: `/uploads/reports/${filename}`, // simpan nilai ini di kolom photo_url
+      path: `${this.baseUrl}${relativePath}`, // simpan nilai ini di kolom photo_url
       mime: type.mime,
       size: file.size,
     };
@@ -48,9 +52,10 @@ export class UploadsService implements OnModuleInit {
 
   /** Hapus file, misalnya saat admin menghapus laporan. Aman dari path traversal. */
   async remove(path: string): Promise<boolean> {
-    if (!UPLOADED_IMAGE_PATH_REGEX.test(path)) return false;
+    const cleanPath = path.startsWith('http') ? new URL(path).pathname : path;
+    if (!UPLOADED_IMAGE_PATH_REGEX.test(cleanPath)) return false;
     try {
-      await unlink(join(this.dir, basename(path)));
+      await unlink(join(this.dir, basename(cleanPath)));
       return true;
     } catch (err: any) {
       if (err?.code === 'ENOENT') return false;

@@ -30,7 +30,7 @@ export class Reports {
     event_time_optional: string;
 
     @Column({type: 'varchar', length: 255, nullable: true})
-    photo_url_optional: string;
+    photo_url_optional: string | null;
 
     @Column({type:"enum", enum:LostAndFoundStatus, default: LostAndFoundStatus.PENDING})
     status: LostAndFoundStatus;

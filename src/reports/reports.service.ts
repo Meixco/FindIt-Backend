@@ -16,6 +16,7 @@ import {
   getSkip,
   toPaginated,
 } from '../utills/pagination.utills.js';
+import { UploadsService } from '../uploads/uploads.service.js';
 
 @Injectable()
 export class ReportsService {
@@ -26,6 +27,7 @@ export class ReportsService {
     private readonly repoLokasi: Repository<Locations>,
     @InjectRepository(Reports)
     private readonly repoLaporan: Repository<Reports>,
+    private readonly uploadService: UploadsService,
   ) {}
 
   private async generateCustomId(): Promise<string> {
@@ -49,7 +51,7 @@ export class ReportsService {
     return `${prefix}${formattedNumber}`;
   }
 
-  async create(dtoLaporan: DtoLaporan) {
+  async create(dtoLaporan: DtoLaporan, photo?: Express.Multer.File) {
     const customId = await this.generateCustomId();
     const { categoryId, locationId, ...reportData } = dtoLaporan;
 
@@ -77,20 +79,30 @@ export class ReportsService {
       );
     }
 
-    const laporanBaru = this.repoLaporan.create({
-      id: customId,
-      ...reportData,
-      categories: kategori,
-      locations: lokasi,
-    });
+    let photoPath: string | null = null;
+    if (photo) {
+      photoPath = (await this.uploadService.saveImage(photo)).path;
+    }
+    try {
+      const laporanBaru = this.repoLaporan.create({
+        id: customId,
+        ...reportData,
+        categories: kategori,
+        locations: lokasi,
+        photo_url_optional: photoPath,
+      });
 
-    this.repoLaporan.save(laporanBaru);
+      this.repoLaporan.save(laporanBaru);
 
-    return {
-      status: 201,
-      message: 'Sukses',
-      data: laporanBaru,
-    };
+      return {
+        status: 201,
+        message: 'Sukses',
+        data: laporanBaru,
+      };
+    } catch (err) {
+      if (photoPath) await this.uploadService.remove(photoPath);
+      throw err;
+    }
   }
 
   async findAll(query: ListReportsDto) {
@@ -165,14 +177,23 @@ export class ReportsService {
     };
   }
 
-  async update(id: string, updateLaporan: UpdateDto) {
+  async update(
+    id: string,
+    updateLaporan: UpdateDto,
+    photo?: Express.Multer.File,
+  ) {
     const cariID = await this.repoLaporan.findOne({
       where: {
         id: id,
       },
     });
 
-    const { locationId, categoryId, ...updateDataLaporan } = updateLaporan;
+    const {
+      locationId,
+      categoryId,
+      remove_photo_url_optional,
+      ...updateDataLaporan
+    } = updateLaporan;
 
     const cariLokasi = await this.repoLokasi.findOne({
       where: {
@@ -198,9 +219,29 @@ export class ReportsService {
       throw new NotFoundException('Sepertinya Laporan Tidak Ditemukan');
     }
 
-    Object.assign(cariID, updateDataLaporan);
+    const fotoLama = cariID.photo_url_optional;
+    let fotoBaru: string | null | undefined;
 
-    const UpdateData = await this.repoLaporan.save(cariID);
+    if (photo) {
+      fotoBaru = (await this.uploadService.saveImage(photo)).path;
+    } else if (remove_photo_url_optional) {
+      fotoBaru = null;
+    }
+
+    Object.assign(cariID, updateDataLaporan);
+    if (fotoBaru !== undefined) cariID.photo_url_optional = fotoBaru;
+
+    let UpdateData;
+    try {
+      UpdateData = await this.repoLaporan.save(cariID);
+    } catch (err) {
+      if (photo && fotoBaru) await this.uploadService.remove(fotoBaru);
+      throw err;
+    }
+
+    if (fotoBaru !== undefined && fotoLama) {
+      await this.uploadService.remove(fotoLama);
+    }
 
     return {
       status: 200,

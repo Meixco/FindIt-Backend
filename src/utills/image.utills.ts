@@ -1,3 +1,5 @@
+import { BadRequestException } from '@nestjs/common';
+
 export const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5 MB
 
 /**
@@ -37,4 +39,21 @@ export function detectImageType(buf: Buffer): DetectedImage | null {
     return { ext: 'webp', mime: 'image/webp' };
   }
   return null;
+  
 }
+
+const ALLOWED_MIME = ['image/jpeg', 'image/png', 'image/webp'];
+
+export const IMAGE_UPLOAD_OPTIONS = {
+  limits: { fileSize: MAX_IMAGE_BYTES, files: 1 },
+  fileFilter: (
+    _req: unknown,
+    file: { mimetype: string },
+    cb: (error: Error | null, accept: boolean) => void,
+  ) => {
+    if (!ALLOWED_MIME.includes(file.mimetype)) {
+      return cb(new BadRequestException('Hanya JPG, PNG, atau WebP'), false);
+    }
+    cb(null, true);
+  },
+};

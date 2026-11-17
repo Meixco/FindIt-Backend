@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsDateString,
   IsEnum,
   IsIn,
@@ -11,7 +12,7 @@ import {
 } from 'class-validator';
 import { OmitType, PickType, PartialType } from '@nestjs/mapped-types';
 import { PaginationDto } from './pagination.dto.js';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { LostAndFoundStatus } from '../entities/reports.entity.js';
 import { UPLOADED_IMAGE_PATH_REGEX } from '../utills/image.utills.js';
 
@@ -42,10 +43,12 @@ export class DtoLaporan {
   @IsNotEmpty()
   description_public: string;
 
+  @Type(() => Number)
   @IsInt()
   @IsNotEmpty()
   categoryId: number;
 
+  @Type(() => Number)
   @IsInt()
   @IsNotEmpty()
   locationId: number;
@@ -65,10 +68,17 @@ export class DtoLaporan {
   @IsString()
   @IsOptional()
   @Matches(UPLOADED_IMAGE_PATH_REGEX, { message: 'photo_url harus berasal dari hasil upload' })
-  photo_url_optional?: string;
+  photo_url_optional?: string | null;
+
+  @IsOptional()
+  @Transform(({ value }) => value === 'true' || value === true) 
+  @IsBoolean()
+  remove_photo_url_optional?: boolean;
 }
 
-export class UpdateDto extends PartialType(DtoLaporan) {}
+export class UpdateDto extends PartialType(DtoLaporan) {
+
+}
 
 export class UpdateStatusReportsDto {
   @IsIn([LostAndFoundStatus.LOST, LostAndFoundStatus.FOUND])

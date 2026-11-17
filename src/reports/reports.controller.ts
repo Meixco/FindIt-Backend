@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ReportsService } from './reports.service.js';
 import { DtoLaporan, ListReportsDto, UpdateDto, UpdateStatusReportsDto } from '../dto/reports.dto.js';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 
 @Controller('reports')
 export class ReportsController {
@@ -32,10 +33,11 @@ async delete(@Param("id") id: string) {
 }
 
 // Untuk Admin
-@Controller('/admin/reports')
+@Controller('admin/reports')
+@UseGuards(JwtAuthGuard)
 export class AdminReportsController {
  constructor (private readonly serviceReports: ReportsService) {}
- @Put("/updateStatus'/:id")
+@Put("/updateStatus/:id")
  async updateStatus (@Param("id") id: string, @Body() updateDto: UpdateStatusReportsDto) {
   return this.serviceReports.updateStatusReport(id, updateDto)
  } 

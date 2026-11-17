@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ClaimsService } from './claims.service.js';
 import {
@@ -14,6 +15,7 @@ import {
   ListClaimsDto,
   UpdateClaimStatusDto,
 } from '../dto/claims.dto.js';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 
 @Controller('claims')
 export class ClaimsController {
@@ -29,6 +31,7 @@ export class ClaimsController {
 // Untuk Admin
 
 @Controller('admin/claims')
+@UseGuards(JwtAuthGuard)
 export class AdminClaimsController {
   constructor(private readonly servisKlaim: ClaimsService) {}
   @Get('/find')
@@ -44,8 +47,8 @@ export class AdminClaimsController {
   @Put('perbaruiStatus/:id')
   async updateStatus(
     @Param('id') id: number,
-    updateStatus: UpdateClaimStatusDto,
+    @Body() updateStatus: UpdateClaimStatusDto,
   ) {
-    return this.servisKlaim.gantiStatus(id, updateStatus);
+    return this.servisKlaim.updateStatus(id, updateStatus);
   }
 }

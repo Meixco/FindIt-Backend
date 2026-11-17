@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ReportsController } from './reports.controller.js';
+import { AdminReportsController, ReportsController } from './reports.controller.js';
 import { ReportsService } from './reports.service.js';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Reports } from '../entities/reports.entity.js';
@@ -12,7 +12,7 @@ import { CategoriesModule } from '../categories/categories.module.js';
     LocationsModule,
     CategoriesModule
   ],
-  controllers: [ReportsController],
+  controllers: [ReportsController, AdminReportsController],
   providers: [ReportsService],
   exports: [TypeOrmModule, ReportsService]
 })

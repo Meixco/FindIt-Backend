@@ -7,9 +7,11 @@ import {
   Patch,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { PrivateContactsService } from './private-contacts.service.js';
 import { DTOContact, updateContact } from '../dto/privateContact.dto.js';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 
 @Controller('private-contacts')
 export class PrivateContactsController {
@@ -28,6 +30,7 @@ export class PrivateContactsController {
 
 // Khusus Admin
 @Controller('/admin/private-contacts')
+@UseGuards(JwtAuthGuard)
 export class AdminPrivateContactsController {
   constructor(
     private readonly servisKontakuntukAdmin: PrivateContactsService,

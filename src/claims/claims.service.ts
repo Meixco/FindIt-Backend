@@ -97,7 +97,7 @@ export class ClaimsService {
     }
   }
 
-  async gantiStatus (id: number, updateDto: UpdateClaimStatusDto) {
+  async updateStatus (id: number, updateDto: UpdateClaimStatusDto) {
     const cariID = await this.repoKlaim.findOne({
       where: {
         id: id
@@ -109,6 +109,7 @@ export class ClaimsService {
     }
 
     cariID.status = updateDto.status;
+    cariID.reviewedAt = new Date();
 
     await this.repoKlaim.save(cariID)
 

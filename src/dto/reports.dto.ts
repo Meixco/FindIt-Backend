@@ -6,12 +6,14 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  Matches,
   Min,
 } from 'class-validator';
 import { OmitType, PickType, PartialType } from '@nestjs/mapped-types';
 import { PaginationDto } from './pagination.dto.js';
 import { Type } from 'class-transformer';
 import { LostAndFoundStatus } from '../entities/reports.entity.js';
+import { UPLOADED_IMAGE_PATH_REGEX } from '../utills/image.utills.js';
 
 export enum ReportType {
   LOST = 'lost',
@@ -62,6 +64,7 @@ export class DtoLaporan {
 
   @IsString()
   @IsOptional()
+  @Matches(UPLOADED_IMAGE_PATH_REGEX, { message: 'photo_url harus berasal dari hasil upload' })
   photo_url_optional?: string;
 }
 

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put } from '@nestjs/common';
 import { LocationsService } from './locations.service.js';
 import { TambahLokasi, UpdateLokasi } from '../dto/locations.dto.js';
 
@@ -21,7 +21,7 @@ export class LocationsController {
     return this.servisLokasi.findOne(id)
   }
 
-  @Patch("update/:id")
+  @Put("update/:id")
   async updateData (@Param("id") id: number, @Body() dtoUpdate: UpdateLokasi) {
     return this.servisLokasi.update(id, dtoUpdate)
   }

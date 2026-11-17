@@ -51,7 +51,7 @@ export class DtoClaims {
 
 export class UpdateClaimStatusDto {
   @IsIn([ClaimStatus.APPROVED, ClaimStatus.REJECTED])
-  status: ClaimStatus.APPROVED | ClaimStatus.REJECTED
+  status: ClaimStatus
 }
 
 export class ListClaimsDto extends PaginationDto {

@@ -29,7 +29,7 @@ export class Claims {
     claim_details_private: string;
 
     @Column({type:"enum", enum:ClaimStatus, default:ClaimStatus.PENDING})
-    status: string;
+    status: ClaimStatus;
 
     @CreateDateColumn({name: "created_at"})
     createdAt: Date;

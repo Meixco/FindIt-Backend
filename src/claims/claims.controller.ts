@@ -5,6 +5,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import { ClaimsService } from './claims.service.js';
@@ -40,7 +41,7 @@ export class AdminClaimsController {
     return this.servisKlaim.findOne(id);
   }
 
-  @Patch('perbaruiStatus/:id')
+  @Put('perbaruiStatus/:id')
   async updateStatus(
     @Param('id') id: number,
     updateStatus: UpdateClaimStatusDto,

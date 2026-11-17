@@ -1,11 +1,21 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsOrder, FindOptionsWhere, Like, Repository } from 'typeorm';
-import { DtoLaporan, ListReportsDto, UpdateDto } from '../dto/reports.dto.js';
+import {
+  DtoLaporan,
+  ListReportsDto,
+  UpdateDto,
+  UpdateStatusReportsDto,
+} from '../dto/reports.dto.js';
 import { Categories } from '../entities/categories.entity.js';
 import { Locations } from '../entities/locations.entity.js';
 import { Reports } from '../entities/reports.entity.js';
-import { dateRange, escapeLike, getSkip, toPaginated } from '../utills/pagination.utills.js';
+import {
+  dateRange,
+  escapeLike,
+  getSkip,
+  toPaginated,
+} from '../utills/pagination.utills.js';
 
 @Injectable()
 export class ReportsService {
@@ -84,7 +94,19 @@ export class ReportsService {
   }
 
   async findAll(query: ListReportsDto) {
-    const {page, limit, order, sort_by, search, report_type, category_id, location_id, status, date_from, date_to} = query;
+    const {
+      page,
+      limit,
+      order,
+      sort_by,
+      search,
+      report_type,
+      category_id,
+      location_id,
+      status,
+      date_from,
+      date_to,
+    } = query;
 
     const base: FindOptionsWhere<Reports> = {};
     if (report_type) base.report_type = report_type;
@@ -97,19 +119,23 @@ export class ReportsService {
 
     const where: FindOptionsWhere<Reports> | FindOptionsWhere<Reports>[] =
       search
-      ? [
-        {...base, item_name: Like(`%${escapeLike(search)}%`)},
-        {...base, description_public: Like(`%${escapeLike(search)}%`)}
-      ] : base
+        ? [
+            { ...base, item_name: Like(`%${escapeLike(search)}%`) },
+            { ...base, description_public: Like(`%${escapeLike(search)}%`) },
+          ]
+        : base;
 
-      const orderBy = { [sort_by]: order, id: 'DESC' } as FindOptionsOrder<Reports>;
+    const orderBy = {
+      [sort_by]: order,
+      id: 'DESC',
+    } as FindOptionsOrder<Reports>;
 
     const [data, total] = await this.repoLaporan.findAndCount({
       where,
-      relations: {categories: true, locations: true},
+      relations: { categories: true, locations: true },
       order: orderBy,
       skip: getSkip(page, limit),
-      take: limit
+      take: limit,
     });
 
     return toPaginated(data, total, page, limit);
@@ -146,66 +172,91 @@ export class ReportsService {
       },
     });
 
-    const {locationId, categoryId, ...updateDataLaporan} = updateLaporan;
+    const { locationId, categoryId, ...updateDataLaporan } = updateLaporan;
 
     const cariLokasi = await this.repoLokasi.findOne({
       where: {
-        id: locationId
-      }
+        id: locationId,
+      },
     });
 
     const cariKategori = await this.repoKategori.findOne({
       where: {
-        id: categoryId
-      }
-    })
+        id: categoryId,
+      },
+    });
 
     if (!cariKategori) {
-      throw new NotFoundException("Tidak Ditemukan Kategori")
+      throw new NotFoundException('Tidak Ditemukan Kategori');
     }
 
-    if(!cariLokasi) {
-      throw new NotFoundException("Tidak Ada Lokasi Ditemukan")
+    if (!cariLokasi) {
+      throw new NotFoundException('Tidak Ada Lokasi Ditemukan');
     }
 
     if (!cariID) {
-      throw new NotFoundException("Sepertinya Laporan Tidak Ditemukan")
+      throw new NotFoundException('Sepertinya Laporan Tidak Ditemukan');
     }
 
-    Object.assign(cariID, updateDataLaporan)
+    Object.assign(cariID, updateDataLaporan);
 
     const UpdateData = await this.repoLaporan.save(cariID);
 
     return {
       status: 200,
-      message: "Sukses",
-      data: UpdateData
+      message: 'Sukses',
+      data: UpdateData,
+    };
+  }
+
+  async updateStatusReport(
+    id: string,
+    updateStatusDto: UpdateStatusReportsDto,
+  ) {
+    const cariID = await this.repoLaporan.findOne({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!cariID) {
+      throw new NotFoundException('Sepertinya Laporan Tidak Ditemukan');
     }
+
+    cariID.status = updateStatusDto.status;
+
+    await this.repoLaporan.save(cariID);
+
+    return {
+      status: 200,
+      message: 'Sukses',
+      data: cariID,
+    };
   }
 
-async delete (id: string) {
-  const tampilkanID = await this.repoLaporan.findOne({
-    where: {
-      id: id
-    },
-    relations: {
-      categories: true,
-      locations: true
+  async delete(id: string) {
+    const tampilkanID = await this.repoLaporan.findOne({
+      where: {
+        id: id,
+      },
+      relations: {
+        categories: true,
+        locations: true,
+      },
+    });
+
+    if (!tampilkanID) {
+      throw new NotFoundException('Sepertinya Laporan Belum Di Buat');
     }
-  })
 
-  if (!tampilkanID) {
-    throw new NotFoundException("Sepertinya Laporan Belum Di Buat")
+    await this.repoLaporan.delete({
+      id: id,
+    });
+
+    return {
+      status: 200,
+      message: 'success',
+      data: tampilkanID,
+    };
   }
-
-  await this.repoLaporan.delete({
-    id: id
-  })
-
-  return {
-    status: 200,
-    message: "success",
-    data: tampilkanID
-  }
-}
 }

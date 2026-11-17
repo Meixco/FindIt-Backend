@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query } from '@nestjs/common';
 import { ReportsService } from './reports.service.js';
-import { DtoLaporan, ListReportsDto, UpdateDto } from '../dto/reports.dto.js';
+import { DtoLaporan, ListReportsDto, UpdateDto, UpdateStatusReportsDto } from '../dto/reports.dto.js';
 
 @Controller('reports')
 export class ReportsController {
@@ -20,7 +20,7 @@ async findOne(@Param("id") id: string) {
   return this.laporanService.findOne(id)
 }
 
-@Patch("/update/:id")
+@Put("/update/:id")
 async update(@Param("id") id: string, @Body() updateDto: UpdateDto) {
   return this.laporanService.update(id, updateDto)
 }
@@ -29,5 +29,14 @@ async update(@Param("id") id: string, @Body() updateDto: UpdateDto) {
 async delete(@Param("id") id: string) {
   return this.laporanService.delete(id)
 }
+}
 
+// Untuk Admin
+@Controller('/admin/reports')
+export class AdminReportsController {
+ constructor (private readonly serviceReports: ReportsService) {}
+ @Put("/updateStatus'/:id")
+ async updateStatus (@Param("id") id: string, @Body() updateDto: UpdateStatusReportsDto) {
+  return this.serviceReports.updateStatusReport(id, updateDto)
+ } 
 }

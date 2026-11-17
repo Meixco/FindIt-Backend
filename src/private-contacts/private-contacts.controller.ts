@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
 } from '@nestjs/common';
 import { PrivateContactsService } from './private-contacts.service.js';
 import { DTOContact, updateContact } from '../dto/privateContact.dto.js';
@@ -19,7 +20,7 @@ export class PrivateContactsController {
     return this.servisKontak.create(kontakDto);
   }
 
-  @Patch('/update/:id')
+  @Put('/update/:id')
   async update(@Param('id') id: number, @Body() perbaruiDto: updateContact) {
     return this.servisKontak.update(id, perbaruiDto);
   }

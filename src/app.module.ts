@@ -8,11 +8,19 @@ import { ReportsModule } from './reports/reports.module.js';
 import { LocationsModule } from './locations/locations.module.js';
 import { PrivateContactsModule } from './private-contacts/private-contacts.module.js';
 import { ClaimsModule } from './claims/claims.module.js';
+import { ConfigModule } from '@nestjs/config';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthModule } from './auth/auth.module.js';
+import { UploadsModule } from './uploads/uploads.module.js';
+import { AdminModule } from './admin/admin.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
 @Module({
   imports: [
+    ConfigModule.forRoot({isGlobal: true}),
+    ThrottlerModule.forRoot([{ ttl: 60_000, limit: 60 }]),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',
@@ -33,8 +41,11 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     LocationsModule,
     PrivateContactsModule,
     ClaimsModule,
+    AuthModule,
+    UploadsModule,
+    AdminModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [{ provide: APP_GUARD,  useClass: ThrottlerGuard },AppService],
 })
 export class AppModule {}

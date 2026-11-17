@@ -67,6 +67,11 @@ export class DtoLaporan {
 
 export class UpdateDto extends PartialType(DtoLaporan) {}
 
+export class UpdateStatusReportsDto {
+  @IsIn([LostAndFoundStatus.LOST, LostAndFoundStatus.FOUND])
+  status: LostAndFoundStatus
+}
+
 export class ListReportsDto extends PaginationDto {
   @IsOptional()
   @IsIn(REPORT_SORT_FIELDS)

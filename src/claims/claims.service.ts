@@ -108,7 +108,7 @@ export class ClaimsService {
       throw new NotFoundException("Maaf, Tidak Ditemukan Klaim Pengguna")
     }
 
-    Object.assign(cariID, updateDto)
+    cariID.status = updateDto.status;
 
     await this.repoKlaim.save(cariID)
 
